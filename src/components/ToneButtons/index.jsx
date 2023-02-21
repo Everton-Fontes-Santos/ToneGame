@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ToneButton from '../ToneButton'
+import * as st from './styled'
+
 
 const generateButtons= (notes)=>{
     const buttons = []
@@ -9,7 +11,7 @@ const generateButtons= (notes)=>{
             {
                 id,
                 status: "",
-                name: notes[id]
+                name: notes[id],
             }
         )
     }
@@ -28,7 +30,11 @@ export default function ToneButtons(){
     const [playingIdx, setPlayingIdx] = useState(0)
     //refs
     const refs = {}
-    notes.forEach(note=> refs[note]=useRef(null))
+    const sounds = {}
+    notes.forEach(note=>{
+        refs[note]=useRef(null)
+        sounds[note] = new Audio(require(`../../wav/${note}.wav`))
+    })
 
 
     const addNewNote = ()=>{
@@ -59,9 +65,9 @@ export default function ToneButtons(){
     
                 //show the ref
                 setTimeout(()=>{
-                    ref.current.classList.add('brightness')
+                    ref.current.classList.add('brightness-50')
                     setTimeout(()=>{
-                        ref.current.classList.remove('brightness')
+                        ref.current.classList.remove('brightness-50')
                         if(idx < sequence.length -1) showSequence(idx+1)
                     }, 250)
                 }, 250)
@@ -79,6 +85,8 @@ export default function ToneButtons(){
                 e.target.classList.remove("opacity-50")                
 
                 const clickNote = e.target.getAttribute("note")
+
+                sounds[clickNote].play()
                 if(sequence[playingIdx] === clickNote){
                     if(playingIdx === sequence.length-1){
                         setTimeout(()=>{
@@ -100,13 +108,16 @@ export default function ToneButtons(){
     }
 
     return (
-        <div className='container'>
-            <button onClick={handleNextLevel}>
+        <st.Container>
+            <st.PlayButton onClick={handleNextLevel}>
                 { sequence.length === 0 ? "Play": `${sequence.length} Notes`}
-            </button>
+            </st.PlayButton>
+            <st.PlayContainer>
             { items.map(item => (
-                <ToneButton key={item.id} item={item} onClick={handleNoteClick} ref={refs[item.name]} note={item.name}/>
+                <ToneButton key={item.id} item={item} onClick={handleNoteClick} ref={refs[item.name]} note={item.name} bg={`bg-red-${item.id}00`}/>
             ))}
-        </div>
+            </st.PlayContainer>
+            
+        </st.Container>
     )
 }
