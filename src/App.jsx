@@ -5,7 +5,7 @@ import "../dist/output.css"
 function App() {
   return (
     <div className="App" role="main">
-      <h1 class="text-3xl"> Tone Game</h1>
+      <h1 className="text-3xl"> Tone Game</h1>
         <ToneButtons />
     </div>
   );
