@@ -715,6 +715,28 @@ video {
   animation: spin 4s linear infinite;
 }
 
+@keyframes revertSpin {
+  0% {
+    content: var(--tw-content);
+    transform: rotate(360deg);
+  }
+
+  100% {
+    content: var(--tw-content);
+    transform: rotate(0deg);
+  }
+}
+
+.before\:animate-\[revertSpin_4s_linear_infinite\]::before {
+  content: var(--tw-content);
+  animation: revertSpin 4s linear infinite;
+}
+
+.before\:animate-\[pin_4s_linear_infinite\]::before {
+  content: var(--tw-content);
+  animation: pin 4s linear infinite;
+}
+
 .before\:items-center::before {
   content: var(--tw-content);
   align-items: center;

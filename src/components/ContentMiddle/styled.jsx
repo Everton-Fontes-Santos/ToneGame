@@ -7,7 +7,7 @@ export const Cont = tw.div`
     text-center
     justify-center
     items-center
-    
+
     before:inset-[60px]
     before:absolute
     before:border-4
