@@ -1,19 +1,28 @@
 import React, { forwardRef } from "react";
-import {Styled, Label} from "./styled";
+import {BlackButton, Styled} from "./styled";
 
-const ToneButton = forwardRef(({item, onClick, note, bg,rotate}, ref)=>(
+const ToneButton = forwardRef(({item, onClick, note, bg}, ref)=>(
     <Styled 
     // className="ToneButton"
-    rotate={rotate}
     onClick={onClick}
     ref={ref}
     note={note}
     bg={bg}
     >
-        <Label rotate={rotate}>
-            {item.name}
-        </Label>
+        {item.name}
     </Styled>
+))
+
+export const ToneBlackButton = forwardRef(({item, onClick, note, bg}, ref)=>(
+    <BlackButton 
+    // className="ToneButton"
+    onClick={onClick}
+    ref={ref}
+    note={note}
+    bg={bg}
+    >
+        {item.name}
+    </BlackButton>
 ))
 
 export default  ToneButton

@@ -1,35 +1,35 @@
 import tw from 'tailwind-styled-components'
 import st from 'styled-components'
 
-const origin = st.div`
-    transform:rotate(${props=>props.rotate}deg)
+
+export const Styled = tw.button`
+    w-[40px]
+    h-[120px]
+    border-4
+    border-black
+    rounded-[4px]
+    outline-none
+    pointer
+    -left-[4px]
+    bg-white
+    text-transparent
+    ${props=>props.bg}
 `
 
-const revert = st.button`
-    transform:rotate(-${props=>props.rotate}deg)
+const black = st.button`
+    left: ${props=>props.bg}
 `
 
-export const Styled = tw(origin)`
+export const BlackButton = tw(black)`
     absolute
-    h-[50px]
-    w-[50px]
-    rounded-[50%]
-    border
-    z-[100]
-    overflow-hidden
-    delay-[0.5s]
-    shadow-[0 0 0 4px #222]
-    origin-[450%]
-`
-
-export const Label = tw(revert)`
-    absolute
-    top-0
-    left-0
-    w-full
-    h-full
-    cover
-    rounded-full
-    delay-[0.5s]
-    text-white
+    bg-black
+    text-transparent
+    w-[24px]
+    h-[80px]
+    outline-none
+    border-3
+    border-black
+    rounded-2
+    pointer
+    z-100
 `

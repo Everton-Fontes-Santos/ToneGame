@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import ToneButton from '../ToneButton'
+import ToneButton, { ToneBlackButton } from '../ToneButton'
 import Content from '../ContentMiddle'
 import * as st from './styled'
-import wavs from '../../utils/sounds'
+import wavs, {playSound} from '../../utils/sounds'
+
 // import { drawHand } from '../../utils/hand'
 // import Webcam from "react-webcam";
 // import * as handpose from '@tensorflow-models/handpose'
@@ -20,8 +21,16 @@ const generateButtons= (notes)=>{
     }
     return buttons
 }
-
-const notes = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"]
+const lefts = {
+    Db4:'28px',
+    Eb4:"68px",
+    Gb4:"148px",
+    Ab4:"188px",
+    Bb4:"228px",
+    Db5:"308px",
+    Eb5:"348px"
+}
+const notes = [...wavs.keys()]
 
 export default function ToneButtons(){
 
@@ -37,56 +46,10 @@ export default function ToneButtons(){
     const sounds = {}
     notes.forEach(note=>{
         refs[note]=useRef(null)
-        sounds[note] = new Audio(wavs.get(note))
+        sounds[note] = wavs.get(note)
     })
     refs.content = useRef(null)
-    // refs.webcam = useRef(null)
-    // refs.canvas = useRef(null)
-
-    // const runHandPose = async ()=>{
-    //     const net = await handpose.load()
-    //     setInterval(()=>{
-    //         detect(net)
-    //     },100)
-    // }
-
-    // const detect = async (net) => {
-    //     // Check data is available
-    //     if (
-    //       typeof refs.webcam.current !== "undefined" &&
-    //       refs.webcam.current !== null &&
-    //       refs.webcam.current.video.readyState === 4
-    //     ) {
-    //       // Get Video Properties
-    //       const video = refs.webcam.current.video;
-    //       const videoWidth = refs.webcam.current.video.videoWidth;
-    //       const videoHeight = refs.webcam.current.video.videoHeight;
     
-    //       // Set video width
-    //       refs.webcam.current.video.width = videoWidth;
-    //       refs.webcam.current.video.height = videoHeight;
-    
-    //       // Set canvas height and width
-    //       refs.canvas.current.width = videoWidth;
-    //       refs.canvas.current.height = videoHeight;
-    
-    //       // Make Detections
-    //       const hand = await net.estimateHands(video);
-    //       // console.log(hand);
-    
-    //       ///////// NEW STUFF ADDED GESTURE HANDLING
-    
-    //       if (hand.length > 0) {
-            
-    //       }
-    
-    //       ///////// NEW STUFF ADDED GESTURE HANDLING
-    
-    //       // Draw mesh
-    //       const ctx = refs.canvas.current.getContext("2d");
-    //       drawHand(hand, ctx);
-    //     }
-    //   };
 
 
     const addNewNote = ()=>{
@@ -111,16 +74,17 @@ export default function ToneButtons(){
     // useEffect(()=>{runHandPose()},[]);
     useEffect(()=>{
         // show sequence
-        console.log(sequence)
         if(sequence.length >0){
             const showSequence = (idx=0)=>{
                 let ref = refs[sequence[idx]]
                 //show the ref
                 setTimeout(()=>{
-                    ref.current.classList.add('brightness-40')
-                    sounds[sequence[idx]].play()
+                    ref.current.classList.add('shadow-lg')
+                    ref.current.classList.add('shadow-indigo-500/50')
+                    playSound(sounds[sequence[idx]])
                     setTimeout(()=>{
-                        ref.current.classList.remove('brightness-40')
+                        ref.current.classList.remove('shadow-lg')
+                        ref.current.classList.remove('shadow-indigo-500/50')
                         
                         if(idx < sequence.length -1) showSequence(idx+1)
                     }, 250)
@@ -133,13 +97,15 @@ export default function ToneButtons(){
     }, [sequence])
 
     const handleNoteClick = (e)=>{
-        const clickNote = e.target.getAttribute("note")
+        const clickNote = e.target.innerText
         if(playing){
-            e.target.classList.add("opacity-50")
+            e.target.classList.add('shadow-lg')
+            e.target.classList.add('shadow-indigo-500/50')
             setTimeout(()=>{
-                e.target.classList.remove("opacity-50")                
+                e.target.classList.remove("shadow-lg")                
+                e.target.classList.remove("shadow-indigo-500/50")                
 
-                sounds[clickNote].play()
+                playSound(sounds[clickNote])
                 if(sequence[playingIdx] === clickNote){
                     if(playingIdx === sequence.length-1){
                         setTimeout(()=>{
@@ -158,7 +124,13 @@ export default function ToneButtons(){
                 }
             },250)
         }else{
-            sounds[clickNote].play()
+            playSound(sounds[clickNote])
+            e.target.classList.add('shadow-lg')
+            e.target.classList.add('shadow-indigo-500/50')
+            setTimeout(()=>{
+                e.target.classList.remove("shadow-lg")
+                e.target.classList.remove("shadow-indigo-500/50")
+            })
         }
     }
 
@@ -166,22 +138,31 @@ export default function ToneButtons(){
         <st.Container>
             
             <st.PlayContainer>
-                <st.Icon>
                     <st.PlayButton 
                         id={0}
                         onClick={handleNextLevel}
                     >
                         {!playing ? "Play": "Running"}
                     </st.PlayButton>
+                <st.Icon>
+                    
                     { items.map((item, idx) => (
-                        <ToneButton
+                        item.name.slice().includes('b') ?
+                        <ToneBlackButton
                             key={item.id}
-                            rotate={(Number(idx)+1)*(360/8)}
                             item={item} 
                             onClick={handleNoteClick} 
-                            ref={refs[item.name]} 
                             note={item.name} 
-                            bg={`bg-red-${item.id}00`}
+                            bg={`${lefts[item.name]}`}
+                            ref={refs[item.name]}
+                        />:
+                        <ToneButton
+                            key={item.id}
+                            item={item} 
+                            onClick={handleNoteClick} 
+                            note={item.name} 
+                            bg={''}
+                            ref={refs[item.name]} 
                         />
                     ))}
                 </st.Icon>
